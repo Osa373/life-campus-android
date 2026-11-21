@@ -7,14 +7,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -41,7 +39,6 @@ public class MainActivity extends Activity {
     private static final String TRUSTED_HOST = "life-campus.osamah-arishi.workers.dev";
     private WebView webView;
     private LinearLayout root;
-    private Button reminderButton;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private final Runnable syncReminderTask = new Runnable() {
@@ -59,7 +56,6 @@ public class MainActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         setContentView(root);
         buildWebView();
-        setupReminderButton();
         showWebView();
         if (savedInstanceState != null) webView.restoreState(savedInstanceState);
         else webView.loadUrl(APP_URL);
@@ -94,19 +90,10 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void setupReminderButton() {
-        reminderButton = new Button(this);
-        reminderButton.setText("🔔 التنبيهات والمنبّه");
-        reminderButton.setTextColor(Color.WHITE);
-        reminderButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(28, 52, 96)));
-        reminderButton.setOnClickListener(v -> showRemindersDialog());
-    }
-
     private void showWebView() {
         root.removeAllViews();
         if (webView.getParent() != null) ((android.view.ViewGroup) webView.getParent()).removeView(webView);
-        root.addView(webView, new LinearLayout.LayoutParams(-1, 0, 1f));
-        root.addView(reminderButton, new LinearLayout.LayoutParams(-1, -2));
+        root.addView(webView, new LinearLayout.LayoutParams(-1, -1));
     }
 
     private void requestNotificationPermission() {
@@ -294,8 +281,7 @@ public class MainActivity extends Activity {
             });
             offline.addView(text);
             offline.addView(retry);
-            root.addView(offline,new LinearLayout.LayoutParams(-1,0,1));
-            root.addView(reminderButton,new LinearLayout.LayoutParams(-1,-2));
+            root.addView(offline,new LinearLayout.LayoutParams(-1,-1));
         });
     }
 

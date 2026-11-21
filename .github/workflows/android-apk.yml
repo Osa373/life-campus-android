@@ -31,19 +31,19 @@ jobs:
       - name: Build APK
         run: gradle --no-daemon :app:assembleDebug
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk life-campus-v0.2.0-test.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk life-campus-v0.2.1-test.apk
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: LifeCampus-Android-v0.2.0-Test-APK
-          path: life-campus-v0.2.0-test.apk
+          name: LifeCampus-Android-v0.2.1-Test-APK
+          path: life-campus-v0.2.1-test.apk
           if-no-files-found: error
       - name: Publish beta test release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v0.2.0-beta >/dev/null 2>&1; then
-            gh release upload v0.2.0-beta life-campus-v0.2.0-test.apk --clobber
+          if gh release view v0.2.1-beta >/dev/null 2>&1; then
+            gh release upload v0.2.1-beta life-campus-v0.2.1-test.apk --clobber
           else
-            gh release create v0.2.0-beta life-campus-v0.2.0-test.apk --target "$GITHUB_SHA" --title "v0.2.0 Beta — Sound alarms & reminders" --prerelease --notes "Beta test: Native scheduled reminders with notification sound. Manual exact alarms; tasks at 09:00 on due date; lectures 15 minutes before start (next 4 weeks); focus timer completion. Grant notification permission. Automatic reminders are approximate; OEM background restrictions may affect them. Existing debug-signed installations need uninstall/reinstall because each CI runner has a different debug signing key; export Life Campus data before uninstalling. Do not use as final production distribution."
+            gh release create v0.2.1-beta life-campus-v0.2.1-test.apk --target "$GITHUB_SHA" --title "v0.2.1 Beta — Clean layout, reminders" --prerelease --notes "Beta test: Removed the large bottom alarms banner. Automatic notification reminders remain enabled for tasks (09:00 on due date), lectures (15 minutes before start, next 4 weeks), and focus timer completion. Grant notification permission. Automatic reminders are approximate; OEM background restrictions may affect them. Existing debug-signed installations need uninstall/reinstall because each CI runner has a different debug signing key; export Life Campus data before uninstalling. Do not use as final production distribution."
           fi
