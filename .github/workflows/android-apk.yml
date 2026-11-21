@@ -1,0 +1,48 @@
+name: Build and publish Life Campus test APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android 35 platform
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build test APK
+        run: gradle --no-daemon :app:assembleDebug
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk life-campus-v0.1.0-test.apk
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LifeCampus-Android-Test-APK
+          path: life-campus-v0.1.0-test.apk
+          if-no-files-found: error
+      - name: Publish public test release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v0.1.0 >/dev/null 2>&1; then
+            gh release upload v0.1.0 life-campus-v0.1.0-test.apk --clobber
+          else
+            gh release create v0.1.0 life-campus-v0.1.0-test.apk --target "$GITHUB_SHA" --title "v0.1.0 — Android test APK" --notes "Test build. GitHub runner debug signing changes per build: do not rely on updates in-place. Production distribution requires a permanent private signing key."
+          fi
