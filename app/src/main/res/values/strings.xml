@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">حياتي وجامعتي</string>
+    <string name="no_connection">تعذر تحميل التطبيق. تأكد من اتصال الإنترنت وحاول مرة أخرى.</string>
+    <string name="retry">إعادة المحاولة</string>
+</resources>
